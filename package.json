@@ -18,6 +18,9 @@
     "sinon": "^8.1.1",
     "sinon-chai": "^3.4.0"
   },
+  "files": [
+    "index.js"
+  ],
   "scripts": {
     "test": "mocha --require @babel/register 'tests/**/**spec.js'"
   }
