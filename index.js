@@ -3,8 +3,14 @@ const Bottle = require('bottlejs')
 const registry = new Bottle()
 const container = registry.container
 
-const inject = serviceName => elementDescriptor => {
-  const { kind, key, placement, descriptor, finisher } = elementDescriptor
+const inject = (serviceNameOrDescriptor, serviceName) => {
+  if (typeof serviceNameOrDescriptor === 'string') {
+    return function(descriptor) {
+      return inject(descriptor, serviceNameOrDescriptor)
+    }
+  }
+
+  const { kind, key, placement, descriptor, finisher } = serviceNameOrDescriptor
   return {
     kind,
     placement,
@@ -12,7 +18,7 @@ const inject = serviceName => elementDescriptor => {
     finisher,
     key,
     initializer() {
-      return container[serviceName]
+      return container[serviceName || key]
     }
   }
 }
