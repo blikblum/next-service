@@ -35,15 +35,27 @@ const createClass = (BaseClass, serviceName, dependencies) => {
   registry.service(serviceName, Injectable)
 }
 
-const service = (serviceName, ...dependencies) => {
-  return classDescriptor => {
-    const { kind, elements } = classDescriptor
-    return {
-      kind,
-      elements,
-      finisher(Ctor) {
-        createClass(Ctor, serviceName, dependencies)
-      }
+const service = (
+  serviceNameOrDescriptor,
+  serviceNameOrDependency,
+  ...dependencies
+) => {
+  if (typeof serviceNameOrDescriptor === 'string') {
+    return function(descriptor) {
+      return service(
+        descriptor,
+        serviceNameOrDescriptor,
+        ...[serviceNameOrDependency, ...dependencies]
+      )
+    }
+  }
+
+  const { kind, elements } = serviceNameOrDescriptor
+  return {
+    kind,
+    elements,
+    finisher(Ctor) {
+      createClass(Ctor, serviceNameOrDependency || Ctor.name, dependencies)
     }
   }
 }
