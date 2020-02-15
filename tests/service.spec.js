@@ -59,4 +59,21 @@ describe('service', () => {
     const myService = container.myService
     expect(myService.x).to.be.equal('y')
   })
+
+  it('should allow to define a factory', () => {
+    @service('otherService')
+    class OtherService {}
+
+    @service('myService')
+    class MyService {
+      static factory(container) {
+        const instance = new MyService()
+        instance.otherService = container.otherService
+        return instance
+      }
+    }
+
+    const myService = container.myService
+    expect(myService.otherService).to.be.instanceOf(OtherService)
+  })
 })

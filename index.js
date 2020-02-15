@@ -36,6 +36,9 @@ const createClass = (BaseClass, serviceName, dependencies) => {
   if (typeof BaseClass.decorator === 'function') {
     registry.decorator(serviceName, BaseClass.decorator)
   }
+  if (typeof BaseClass.factory === 'function') {
+    registry.factory(serviceName, BaseClass.factory)
+  }
 }
 
 const service = (serviceName, ...dependencies) => {
