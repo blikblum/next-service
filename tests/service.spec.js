@@ -46,4 +46,17 @@ describe('service', () => {
     expect(myService).to.be.instanceOf(MyService)
     expect(myService.otherService).to.be.instanceOf(NotRegistered)
   })
+
+  it('should allow to define a decorator', () => {
+    @service('myService')
+    class MyService {
+      static decorator(instance) {
+        instance.x = 'y'
+        return instance
+      }
+    }
+
+    const myService = container.myService
+    expect(myService.x).to.be.equal('y')
+  })
 })

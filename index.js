@@ -33,6 +33,9 @@ const createClass = (BaseClass, serviceName, dependencies) => {
     }
   }
   registry.service(serviceName, Injectable)
+  if (typeof BaseClass.decorator === 'function') {
+    registry.decorator(serviceName, BaseClass.decorator)
+  }
 }
 
 const service = (serviceName, ...dependencies) => {
