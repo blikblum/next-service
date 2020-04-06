@@ -13,6 +13,13 @@ describe('service', () => {
     expect(container.myService).to.be.instanceOf(MyService)
   })
 
+  it('should use class name when no option is passed', () => {
+    @service
+    class MyService {}
+
+    expect(container.MyService).to.be.instanceOf(MyService)
+  })
+
   it('should allow to define dependencies', () => {
     @service('otherService')
     class OtherService {}

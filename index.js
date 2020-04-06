@@ -41,16 +41,28 @@ const createClass = (BaseClass, serviceName, dependencies = []) => {
   }
 }
 
-const service = (serviceName, dependencies) => {
-  return (classDescriptor) => {
-    const { kind, elements } = classDescriptor
-    return {
-      kind,
-      elements,
-      finisher(Ctor) {
-        createClass(Ctor, serviceName, dependencies)
-      },
+const service = (
+  serviceNameOrDescriptor,
+  serviceNameOrDependencies,
+  dependencies
+) => {
+  if (typeof serviceNameOrDescriptor === 'string') {
+    return function (descriptor) {
+      return service(
+        descriptor,
+        serviceNameOrDescriptor,
+        serviceNameOrDependencies
+      )
     }
+  }
+
+  const { kind, elements } = serviceNameOrDescriptor
+  return {
+    kind,
+    elements,
+    finisher(Ctor) {
+      createClass(Ctor, serviceNameOrDependencies || Ctor.name, dependencies)
+    },
   }
 }
 
