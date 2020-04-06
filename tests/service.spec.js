@@ -17,7 +17,7 @@ describe('service', () => {
     @service('otherService')
     class OtherService {}
 
-    @service('myService', 'otherService')
+    @service('myService', ['otherService'])
     class MyService {
       constructor(otherService) {
         this.otherService = otherService

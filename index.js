@@ -5,7 +5,7 @@ const container = registry.container
 
 const inject = (serviceNameOrDescriptor, serviceName) => {
   if (typeof serviceNameOrDescriptor === 'string') {
-    return function(descriptor) {
+    return function (descriptor) {
       return inject(descriptor, serviceNameOrDescriptor)
     }
   }
@@ -19,11 +19,11 @@ const inject = (serviceNameOrDescriptor, serviceName) => {
     key,
     initializer() {
       return container[serviceName || key]
-    }
+    },
   }
 }
 
-const createClass = (BaseClass, serviceName, dependencies) => {
+const createClass = (BaseClass, serviceName, dependencies = []) => {
   const Injectable = class extends BaseClass {
     constructor(...args) {
       for (let i = 0; i < dependencies.length; i++) {
@@ -41,15 +41,15 @@ const createClass = (BaseClass, serviceName, dependencies) => {
   }
 }
 
-const service = (serviceName, ...dependencies) => {
-  return classDescriptor => {
+const service = (serviceName, dependencies) => {
+  return (classDescriptor) => {
     const { kind, elements } = classDescriptor
     return {
       kind,
       elements,
       finisher(Ctor) {
         createClass(Ctor, serviceName, dependencies)
-      }
+      },
     }
   }
 }
