@@ -48,7 +48,7 @@ class MyClass {
 ```js
 import { service } from 'next-service'
 
-@service('consumerService', 'myService')
+@service('consumerService', ['myService'])
 class ConsumerService {
   constructor(myService) {
     this.myService = myService
@@ -62,7 +62,7 @@ class ConsumerService {
 
 #### Bottlejs API
 
-Its possible to use also the [Bottlejs](https://github.com/young-steveo/bottlejs) API
+Its possible to use the [Bottlejs](https://github.com/young-steveo/bottlejs) API
 
 A Bottle instance called `registry` and its `container` are exported:
 
@@ -83,7 +83,38 @@ registry.decorator(function(service) {
 })
 ```
 
+Its possible to define Bottlejs decorator and factory functions as static class functions:
+
+```js
+import { service } from 'next-service'
+
+@service('myService')
+class MyService {
+  static decorator(instance) {
+    instance.initialize()
+    return instance
+  }
+
+  saveTheWorld() {}
+}
+
+@service('otherService')
+class OtherService {
+  static factory(container) {
+    const myService = container.myService
+    myService.prepareForOtherService()
+    return new OtherService(myService)
+  }
+
+  constructor(myService) {
+    this.myService = myService
+  }
+}
+```
+
+
+
 ### License
 
 MIT
-Copyright © 2019 Luiz Américo
+Copyright © 2020 Luiz Américo
