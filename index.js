@@ -1,4 +1,4 @@
-const Bottle = require('bottlejs')
+import Bottle from 'bottlejs'
 
 const registry = new Bottle()
 const container = registry.container
@@ -66,4 +66,4 @@ const service = (
   }
 }
 
-module.exports = { registry, container, service, inject }
+export { registry, container, service, inject }

@@ -1,5 +1,5 @@
-const { service, container, registry } = require('..')
-const { expect } = require('chai')
+import { service, container, registry } from '..'
+import { expect } from 'chai'
 
 describe('service', () => {
   beforeEach(() => {
