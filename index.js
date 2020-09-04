@@ -3,6 +3,10 @@ import Bottle from 'bottlejs'
 const registry = new Bottle()
 const container = registry.container
 
+/**
+ * Inject a service into decorated class field
+ * @param {String} [service] Service name to be injected
+ */
 const inject = (serviceNameOrDescriptor, serviceName) => {
   if (typeof serviceNameOrDescriptor === 'string') {
     return function (descriptor) {
@@ -41,6 +45,11 @@ const createClass = (BaseClass, serviceName, dependencies = []) => {
   }
 }
 
+/**
+ * Declares the decorated class as a service and the dependencies to be injected in constructor
+ * @param {String} [service] Service name
+ * @param {String[]} [dependencies] Dependencies
+ */
 const service = (
   serviceNameOrDescriptor,
   serviceNameOrDependencies,
