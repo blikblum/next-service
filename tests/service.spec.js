@@ -20,6 +20,13 @@ describe('service', () => {
     expect(container.MyService).to.be.instanceOf(MyService)
   })
 
+  it('should service class have same name as decorated', () => {
+    @service
+    class MyService {}
+
+    expect(container.MyService.constructor.name).to.be.equal('MyService')
+  })
+
   it('should allow to define dependencies', () => {
     @service('otherService')
     class OtherService {}

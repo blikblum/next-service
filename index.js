@@ -36,6 +36,10 @@ const createClass = (BaseClass, serviceName, dependencies = []) => {
       super(...args)
     }
   }
+  Object.defineProperty(Injectable, 'name', {
+    value: BaseClass.name,
+    configurable: true,
+  })
   registry.service(serviceName, Injectable)
   if (typeof BaseClass.decorator === 'function') {
     registry.decorator(serviceName, BaseClass.decorator)
