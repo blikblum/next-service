@@ -2,19 +2,30 @@ import Bottle from 'bottlejs'
 
 const registry = new Bottle()
 const container = registry.container
+const serviceMap = new Map()
+
+/**
+ * Get the service name
+ * @param {String | Function} [service] Service definition
+ */
+function getServiceName(service) {
+  if (typeof service === 'string') return service
+  if (serviceMap.has(service)) return serviceMap.get(service)
+  return service.name
+}
 
 /**
  * Inject a service into decorated class field
- * @param {String} [service] Service name to be injected
+ * @param {String | Function} [service] Service to be injected. Can be a string or the registered class
  */
-const inject = (serviceNameOrDescriptor, serviceName) => {
-  if (typeof serviceNameOrDescriptor === 'string') {
+const inject = (serviceOrDescriptor, service) => {
+  if (typeof serviceOrDescriptor !== 'object') {
     return function (descriptor) {
-      return inject(descriptor, serviceNameOrDescriptor)
+      return inject(descriptor, serviceOrDescriptor)
     }
   }
 
-  const { kind, key, placement, descriptor, finisher } = serviceNameOrDescriptor
+  const { kind, key, placement, descriptor, finisher } = serviceOrDescriptor
   return {
     kind,
     placement,
@@ -22,7 +33,7 @@ const inject = (serviceNameOrDescriptor, serviceName) => {
     finisher,
     key,
     initializer() {
-      return container[serviceName || key]
+      return container[getServiceName(service || key)]
     },
   }
 }
@@ -31,11 +42,12 @@ const createClass = (BaseClass, serviceName, dependencies = []) => {
   const Injectable = class extends BaseClass {
     constructor(...args) {
       for (let i = 0; i < dependencies.length; i++) {
-        args[i] = container[dependencies[i]]
+        args[i] = container[getServiceName(dependencies[i])]
       }
       super(...args)
     }
   }
+  serviceMap.set(BaseClass, serviceName)
   Object.defineProperty(Injectable, 'name', {
     value: BaseClass.name,
     configurable: true,
@@ -55,26 +67,26 @@ const createClass = (BaseClass, serviceName, dependencies = []) => {
  * @param {String[]} [dependencies] Dependencies
  */
 const service = (
-  serviceNameOrDescriptor,
-  serviceNameOrDependencies,
+  serviceOrDescriptor,
+  serviceOrDependencies,
   dependencies
 ) => {
-  if (typeof serviceNameOrDescriptor === 'string') {
+  if (typeof serviceOrDescriptor === 'string') {
     return function (descriptor) {
       return service(
         descriptor,
-        serviceNameOrDescriptor,
-        serviceNameOrDependencies
+        serviceOrDescriptor,
+        serviceOrDependencies
       )
     }
   }
 
-  const { kind, elements } = serviceNameOrDescriptor
+  const { kind, elements } = serviceOrDescriptor
   return {
     kind,
     elements,
     finisher(Ctor) {
-      createClass(Ctor, serviceNameOrDependencies || Ctor.name, dependencies)
+      createClass(Ctor, serviceOrDependencies || Ctor.name, dependencies)
     },
   }
 }

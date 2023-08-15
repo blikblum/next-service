@@ -43,6 +43,22 @@ describe('service', () => {
     expect(myService.otherService).to.be.instanceOf(OtherService)
   })
 
+  it('should allow to declare dependencies as classes', () => {
+    @service('otherService')
+    class OtherService {}
+
+    @service('myService', [OtherService])
+    class MyService {
+      constructor(otherService) {
+        this.otherService = otherService
+      }
+    }
+
+    const myService = container.myService
+    expect(myService).to.be.instanceOf(MyService)
+    expect(myService.otherService).to.be.instanceOf(OtherService)
+  })
+
   it('should not overwrite constructor arguments when instantiated directly', () => {
     @service('otherService')
     class OtherService {}

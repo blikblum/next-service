@@ -6,13 +6,26 @@ describe('inject', () => {
     registry.resetProviders()
   })
 
-  it('should set property value to service defined in parameter', () => {
+  it('should instantiate the service registered with the key parameter', () => {
     @service('otherService')
     class OtherService {}
 
     @service('myService')
     class MyService {
       @inject('otherService')
+      otherService
+    }
+
+    expect(container.myService.otherService).to.be.instanceOf(OtherService)
+  })
+
+  it('should allow to use service class as key', () => {
+    @service('otherService')
+    class OtherService {}
+
+    @service('myService')
+    class MyService {
+      @inject(OtherService)
       otherService
     }
 
