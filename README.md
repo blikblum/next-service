@@ -41,6 +41,20 @@ class MyClass {
     this.savior.saveTheWorld()
   }
 }
+
+// or
+
+// using inject with a service class parameter
+import {MyService} from './MyService.js'
+
+class MyClass {
+  @inject(MyService)
+  savior
+
+  doIt() {
+    this.savior.saveTheWorld()
+  }
+}
 ```
 
 ... or as a dependency of another service:
@@ -48,7 +62,24 @@ class MyClass {
 ```js
 import { service } from 'next-service'
 
+// use the service name as dependency
+
 @service('consumerService', ['myService'])
+class ConsumerService {
+  constructor(myService) {
+    this.myService = myService
+  }
+
+  doIt() {
+    this.myService.saveTheWorld()
+  }
+}
+
+// or 
+// use the service class as dependency
+import { MyService } from './MyService.js'
+
+@service('consumerService', [MyService])
 class ConsumerService {
   constructor(myService) {
     this.myService = myService
