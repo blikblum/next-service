@@ -8,7 +8,7 @@ const serviceMap = new Map()
  * Get the service name
  * @param {String | Function} [service] Service definition
  */
-function getServiceName(service) {
+function getServiceId(service) {
   if (typeof service === 'string') return service
   if (serviceMap.has(service)) return serviceMap.get(service)
   return service.name
@@ -33,7 +33,7 @@ const inject = (serviceOrDescriptor, service) => {
     finisher,
     key,
     initializer() {
-      return container[getServiceName(service || key)]
+      return container[getServiceId(service || key)]
     },
   }
 }
@@ -42,7 +42,7 @@ const createClass = (BaseClass, serviceName, dependencies = []) => {
   const Injectable = class extends BaseClass {
     constructor(...args) {
       for (let i = 0; i < dependencies.length; i++) {
-        args[i] = container[getServiceName(dependencies[i])]
+        args[i] = container[getServiceId(dependencies[i])]
       }
       super(...args)
     }
@@ -66,18 +66,10 @@ const createClass = (BaseClass, serviceName, dependencies = []) => {
  * @param {String} [service] Service name
  * @param {String[]} [dependencies] Dependencies
  */
-const service = (
-  serviceOrDescriptor,
-  serviceOrDependencies,
-  dependencies
-) => {
+const service = (serviceOrDescriptor, serviceOrDependencies, dependencies) => {
   if (typeof serviceOrDescriptor === 'string') {
     return function (descriptor) {
-      return service(
-        descriptor,
-        serviceOrDescriptor,
-        serviceOrDependencies
-      )
+      return service(descriptor, serviceOrDescriptor, serviceOrDependencies)
     }
   }
 
@@ -91,4 +83,4 @@ const service = (
   }
 }
 
-export { registry, container, service, inject }
+export { registry, container, service, inject, getServiceId }
