@@ -1,6 +1,6 @@
 {
   "name": "next-service",
-  "version": "0.3.0",
+  "version": "0.4.1",
   "main": "index.js",
   "repository": "https://github.com/blikblum/next-service.git",
   "author": "Luiz Américo <camara_luiz@yahoo.com.br>",
