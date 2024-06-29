@@ -24,5 +24,6 @@
   ],
   "scripts": {
     "test": "mocha --require @babel/register 'tests/**/**spec.js'"
-  }
+  },
+  "packageManager": "yarn@4.3.1"
 }
