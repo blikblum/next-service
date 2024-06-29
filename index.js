@@ -77,21 +77,39 @@ const createClass = (BaseClass, serviceName, dependencies = []) => {
  * @param {String} [service] Service name
  * @param {String[]} [dependencies] Dependencies
  */
-const service = (serviceOrDescriptor, serviceOrDependencies, dependencies) => {
-  if (typeof serviceOrDescriptor === 'string') {
-    return function (descriptor) {
-      return service(descriptor, serviceOrDescriptor, serviceOrDependencies)
+const service = (
+  serviceOrDescriptorOrCtor,
+  serviceOrDependencies,
+  dependencies
+) => {
+  if (typeof serviceOrDescriptorOrCtor === 'string') {
+    return function (descriptorOrCtor) {
+      return service(
+        descriptorOrCtor,
+        serviceOrDescriptorOrCtor,
+        serviceOrDependencies
+      )
     }
   }
 
-  const { kind, elements } = serviceOrDescriptor
-  return {
-    kind,
-    elements,
-    finisher(Ctor) {
-      createClass(Ctor, serviceOrDependencies || Ctor.name, dependencies)
-    },
+  const isLegacy = typeof serviceOrDescriptorOrCtor === 'function'
+
+  if (!isLegacy) {
+    const { kind, elements } = serviceOrDescriptorOrCtor
+    return {
+      kind,
+      elements,
+      finisher(Ctor) {
+        createClass(Ctor, serviceOrDependencies || Ctor.name, dependencies)
+      },
+    }
   }
+
+  createClass(
+    serviceOrDescriptorOrCtor,
+    serviceOrDependencies || serviceOrDescriptorOrCtor.name,
+    dependencies
+  )
 }
 
 export { registry, container, service, inject, getServiceId }
