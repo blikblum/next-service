@@ -1,0 +1,14 @@
+{
+  "include": [
+    "index.js",
+    "tests/*.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "target": "ES6",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
+  }
+}
