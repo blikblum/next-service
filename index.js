@@ -18,7 +18,7 @@ function getServiceId(service) {
  * Inject a service into decorated class field
  * @param {String | Function} [service] Service to be injected. Can be a string or the registered class
  */
-const inject = (serviceOrProtoOrDescriptor, fieldName, service) => {
+function inject(serviceOrProtoOrDescriptor, fieldName, service) {
   const isLegacy = typeof fieldName === 'string'
   if (!isLegacy && typeof serviceOrProtoOrDescriptor.kind !== 'string') {
     return function (protoOrDescriptor, realFieldName) {
@@ -49,7 +49,7 @@ const inject = (serviceOrProtoOrDescriptor, fieldName, service) => {
     container[getServiceId(service || fieldName)]
 }
 
-const createClass = (BaseClass, serviceName, dependencies = []) => {
+function createClass(BaseClass, serviceName, dependencies = []) {
   const Injectable = class extends BaseClass {
     constructor(...args) {
       for (let i = 0; i < dependencies.length; i++) {
@@ -77,11 +77,11 @@ const createClass = (BaseClass, serviceName, dependencies = []) => {
  * @param {String} [service] Service name
  * @param {String[]} [dependencies] Dependencies
  */
-const service = (
+function service(
   serviceOrDescriptorOrCtor,
   serviceOrDependencies,
   dependencies
-) => {
+) {
   if (typeof serviceOrDescriptorOrCtor === 'string') {
     return function (descriptorOrCtor) {
       return service(
