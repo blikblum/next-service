@@ -26,8 +26,7 @@
   ],
   "scripts": {
     "test": "mocha --require @babel/register 'tests/**/**spec.js'",
-    "test:typescript": "mocha --require esbuild-runner/register 'tests/**/**spec.js'",
-    "bundle": "esbuild tests/inject.spec.js --bundle --outfile=testEsbuild.js --tsconfig=tsconfig.json --external:chai"
+    "test:typescript": "mocha --require esbuild-runner/register 'tests/**/**spec.js'"
   },
   "packageManager": "yarn@4.3.1"
 }

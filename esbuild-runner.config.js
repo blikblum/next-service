@@ -1,9 +1,11 @@
 module.exports = {
   esbuild: {
+    loader: {
+      '.js': 'ts',
+    },
     tsconfigRaw: {
-      include: ['index.js', 'tests/**/*.js'],
       compilerOptions: {
-        target: 'esnext',
+        target: 'es2019',
         experimentalDecorators: true,
       },
     },
