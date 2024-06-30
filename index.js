@@ -63,26 +63,14 @@ function inject(serviceOrProtoOrDescriptor, fieldName, service) {
     container[getServiceId(service || fieldName)]
 }
 
-function createClass(BaseClass, serviceName, dependencies = []) {
-  const Injectable = class extends BaseClass {
-    constructor(...args) {
-      for (let i = 0; i < dependencies.length; i++) {
-        args[i] = container[getServiceId(dependencies[i])]
-      }
-      super(...args)
-    }
+function registerService(ServiceClass, serviceId, dependencies = []) {
+  serviceMap.set(ServiceClass, serviceId)
+  registry.service(serviceId, ServiceClass, ...dependencies.map(getServiceId))
+  if (typeof ServiceClass.decorator === 'function') {
+    registry.decorator(serviceId, ServiceClass.decorator)
   }
-  serviceMap.set(BaseClass, serviceName)
-  Object.defineProperty(Injectable, 'name', {
-    value: BaseClass.name,
-    configurable: true,
-  })
-  registry.service(serviceName, Injectable)
-  if (typeof BaseClass.decorator === 'function') {
-    registry.decorator(serviceName, BaseClass.decorator)
-  }
-  if (typeof BaseClass.factory === 'function') {
-    registry.factory(serviceName, BaseClass.factory)
+  if (typeof ServiceClass.factory === 'function') {
+    registry.factory(serviceId, ServiceClass.factory)
   }
 }
 
@@ -123,12 +111,12 @@ function service(
       kind,
       elements,
       finisher(Ctor) {
-        createClass(Ctor, serviceOrDependencies || Ctor.name, dependencies)
+        registerService(Ctor, serviceOrDependencies || Ctor.name, dependencies)
       },
     }
   }
 
-  createClass(
+  registerService(
     serviceOrDescriptorOrCtor,
     serviceOrDependencies || serviceOrDescriptorOrCtor.name,
     dependencies
