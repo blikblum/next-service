@@ -5,8 +5,12 @@ const container = registry.container
 const serviceMap = new Map()
 
 /**
+ * @typedef {{new (...args: any[]): any}} Class
+ */
+
+/**
  * Get the service name
- * @param {String | Function} [service] Service definition
+ * @param {String | Class} service Service definition
  */
 function getServiceId(service) {
   if (typeof service === 'string') return service
@@ -15,8 +19,18 @@ function getServiceId(service) {
 }
 
 /**
- * Inject a service into decorated class field
- * @param {String | Function} [service] Service to be injected. Can be a string or the registered class
+ * Inject a service into decorated class field using field name as service key
+ * @overload
+ * @param {Object} target Target object (class prototype)
+ * @param {String} fieldName Field name
+ * @returns {void}
+ */
+
+/**
+ * Inject a service into decorated class field using a string id or class as service key
+ * @overload
+ * @param {String | Class} service Service to be injected. Can be a string or the registered class
+ * @returns {(target: any, fieldName: string) => void}
  */
 function inject(serviceOrProtoOrDescriptor, fieldName, service) {
   const isLegacy = typeof fieldName === 'string'
@@ -73,9 +87,18 @@ function createClass(BaseClass, serviceName, dependencies = []) {
 }
 
 /**
+ * Declares the decorated class as a service using the class name as service id
+ * @overload
+ * @param {Class} Class
+ * @returns {any}
+ */
+
+/**
  * Declares the decorated class as a service and the dependencies to be injected in constructor
- * @param {String} [service] Service name
- * @param {String[]} [dependencies] Dependencies
+ * @overload
+ * @param {String} serviceId Id of the service to be registered
+ * @param {(String | Class)[]} [dependencies] Dependencies
+ * @returns {(descriptorOrCtor: Class) => any}
  */
 function service(
   serviceOrDescriptorOrCtor,

@@ -2,6 +2,7 @@
   "name": "next-service",
   "version": "0.4.1",
   "main": "index.js",
+  "types": "index.d.ts",
   "repository": "https://github.com/blikblum/next-service.git",
   "author": "Luiz Américo <camara_luiz@yahoo.com.br>",
   "license": "MIT",
@@ -22,7 +23,8 @@
     "sinon-chai": "^3.5.0"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
   "scripts": {
     "test": "mocha --require @babel/register 'tests/**/**spec.js'",
