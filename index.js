@@ -9,13 +9,28 @@ const serviceMap = new Map()
  */
 
 /**
- * Get the service name
- * @param {String | Class} service Service definition
+ * Get the service id from a service key
+ * @param {String | Class} serviceKey Service key
  */
-function getServiceId(service) {
-  if (typeof service === 'string') return service
-  if (serviceMap.has(service)) return serviceMap.get(service)
-  return service.name
+function getServiceId(serviceKey) {
+  if (typeof serviceKey === 'string') return serviceKey
+  if (serviceMap.has(serviceKey)) return serviceMap.get(serviceKey)
+  return serviceKey.name
+}
+
+/**
+ * @overload
+ * @param {Class} serviceKey Service key
+ * @returns {InstanceType<typeof Class>}
+ */
+
+/**
+ * @overload
+ * @param {String} serviceKey Service key
+ * @returns {any}
+ */
+function resolve(serviceKey) {
+  return container[getServiceId(serviceKey)]
 }
 
 /**
@@ -29,7 +44,7 @@ function getServiceId(service) {
 /**
  * Inject a service into decorated class field using a string id or class as service key
  * @overload
- * @param {String | Class} service Service to be injected. Can be a string or the registered class
+ * @param {String | Class} serviceKey Key to the service to be injected. Can be a string or the registered class
  * @returns {(target: any, fieldName: string) => void}
  */
 function inject(serviceOrProtoOrDescriptor, fieldName, service) {
@@ -54,13 +69,12 @@ function inject(serviceOrProtoOrDescriptor, fieldName, service) {
       finisher,
       key,
       initializer() {
-        return container[getServiceId(service || key)]
+        return resolve(service || key)
       },
     }
   }
 
-  serviceOrProtoOrDescriptor[fieldName] =
-    container[getServiceId(service || fieldName)]
+  serviceOrProtoOrDescriptor[fieldName] = resolve(service || fieldName)
 }
 
 function registerService(ServiceClass, serviceId, dependencies = []) {
@@ -85,7 +99,7 @@ function registerService(ServiceClass, serviceId, dependencies = []) {
  * Declares the decorated class as a service and the dependencies to be injected in constructor
  * @overload
  * @param {String} serviceId Id of the service to be registered
- * @param {(String | Class)[]} [dependencies] Dependencies
+ * @param {(String | Class)[]} [dependencies] Service dependencies
  * @returns {(descriptorOrCtor: Class) => any}
  */
 function service(
@@ -123,4 +137,4 @@ function service(
   )
 }
 
-export { registry, container, service, inject, getServiceId }
+export { registry, container, service, inject, resolve, getServiceId }

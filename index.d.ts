@@ -14,7 +14,7 @@ export function service(Class: Class): any
  * Declares the decorated class as a service and the dependencies to be injected in constructor
  * @overload
  * @param {String} serviceId Id of the service to be registered
- * @param {(String | Class)[]} [dependencies] Dependencies
+ * @param {(String | Class)[]} [dependencies] Service dependencies
  * @returns {(descriptorOrCtor: Class) => any}
  */
 export function service(
@@ -32,18 +32,30 @@ export function inject(target: Object, fieldName: string): void
 /**
  * Inject a service into decorated class field using a string id or class as service key
  * @overload
- * @param {String | Class} service Service to be injected. Can be a string or the registered class
+ * @param {String | Class} serviceKey Key to the service to be injected. Can be a string or the registered class
  * @returns {(target: any, fieldName: string) => void}
  */
 export function inject(
-  service: string | Class
+  serviceKey: string | Class
 ): (target: any, fieldName: string) => void
+/**
+ * @overload
+ * @param {Class} serviceKey Service key
+ * @returns {InstanceType<typeof Class>}
+ */
+export function resolve(serviceKey: Class): InstanceType<typeof Class>
+/**
+ * @overload
+ * @param {String} serviceKey Service key
+ * @returns {any}
+ */
+export function resolve(serviceKey: string): any
 /**
  * @typedef {{new (...args: any[]): any}} Class
  */
 /**
- * Get the service name
- * @param {String | Class} service Service definition
+ * Get the service id from a service key
+ * @param {String | Class} serviceKey Service key
  */
-export function getServiceId(service: string | Class): any
+export function getServiceId(serviceKey: string | Class): any
 import Bottle from 'bottlejs'
